@@ -7,6 +7,9 @@
  * Holds the relevant data for an immutable generalized m^2 by m^2 sudoku puzzle.
  */
 
+import java.io.*;
+import java.util.*;
+
 public class Sudoku {
 	// Class variables
 	public static final int UNKNOWN = 0;
@@ -22,9 +25,60 @@ public class Sudoku {
 
 	// Constructors
 	public Sudoku(int[][] inBoard) throws InstantiationException {
+		initializeBoard(inBoard);
+	}
+
+		// Assumes that the first line of the file contains the alphabet of characters that the puzzle is formatted in.
+	// That is, the first character of the first line is the unknown character,
+	// and the next n characters correspond to the numbers 1,2,...,n if the sudoku were purely numeric
+	// Then the puzzle follows in the next n lines
+	public Sudoku(File f) throws InstantiationException {
+		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+			char[] symbols = br.readLine().toCharArray(); // Get the alphabet
+			int numSymbols = symbols.length-1;
+			HashMap<Character, Integer> lookup = new HashMap<>(); // Create a lookup table
+			lookup.put(symbols[0], UNKNOWN);
+			for (int i = 1; i <= numSymbols; i++) lookup.put(symbols[i], i);
+
+			char[][] lines = new char[numSymbols][]; // Hold the lines before parsing them
+
+			int lineNumber = 0;
+			String line = br.readLine(); // Read first line
+			int width = line.length();
+			if (width < numSymbols) throw new InstantiationException("Too many symbols.");
+			else if (width > numSymbols) throw new InstantiationException("Not enough symbols.");
+
+			while (lineNumber < numSymbols && line != null) { // While there are lines left to read
+				lines[lineNumber] = line.toCharArray(); // Store line in array
+				if (lines[lineNumber].length != width) throw new InstantiationException("Board not rectangular."); // Check its size
+				lineNumber++;
+				line = br.readLine(); // Read next line
+			}
+
+			int height = lineNumber;
+			if (width != height || line != null) throw new InstantiationException("Board not square.");
+
+			// Port char[][] of input to a more accessible form
+			int[][] inputBoard = new int[height][width];
+			for (int i = 0; i < height; i++) {
+				for (int j = 0; j < width; j++) {
+					inputBoard[i][j] = lookup.get(lines[i][j]);
+				}
+			}
+
+			initializeBoard(inputBoard); // Finish initializing the Sudoku
+		} catch (IllegalArgumentException e) {
+			throw new InstantiationException(e.getMessage());
+		} catch (IOException e) {
+			throw new InstantiationException("Error parsing file.");
+		}
+	}
+
+
+	private void initializeBoard(int[][] inBoard) throws IllegalArgumentException {
 		if (!isValidBoard(inBoard)) {
 			// The constructor fails because the board is invalid for some reason
-			throw new InstantiationException("Invalid board.");
+			throw new IllegalArgumentException("Invalid board.");
 		}
 		// Otherwise, the board is valid
 		boardSize = inBoard.length;
