@@ -2,7 +2,7 @@
  * ColumnNode.java
  *
  * @author Logan Pipes
- * @date 04-12-2022
+ * @date 05-12-2022
  *
  * A class representing a column object, used in implementing Knuth's DLX algorithm.
  * Represents a constraint in an exact cover problem.
@@ -17,14 +17,12 @@ class ColumnNode implements LLNode<ColumnNode> {
 
 	private int S; // size (not including itself)
 
-	private int digit; // identifier for the digit this constraint represents
-	private Constraint type; // identifier for whether this is a row/column/sub-board constraint
-	private int index; // identifier for which row/column/sub-board this constraint affects
+	private Constraint constr; // identifier for what constraint this column represents
 
 
 
 	// Constructors
-	public ColumnNode(int inDigit, Constraint inType, int inIndex) {
+	public ColumnNode(Constraint constr) {
 		// Set links:
 		// Create vertical loop:
 		setUp(this); // set up neighbour
@@ -34,11 +32,11 @@ class ColumnNode implements LLNode<ColumnNode> {
 		setLeft(this); // set left neighbour
 		setRight(this); // set right neighbour
 
-		initializeDefaults(inDigit, inType, inIndex); // Set other ColumnNode properties
+		this.constr = constr;
 	}
 
 
-	public ColumnNode(int inDigit, Constraint inType, int inIndex, ColumnNode left) {
+	public ColumnNode(Constraint constr, ColumnNode left) {
 		// Set links:
 		// Create vertical loop:
 		setUp(this); // set up neighbour
@@ -50,15 +48,7 @@ class ColumnNode implements LLNode<ColumnNode> {
 		getLeft().setRight(this); // reset left neighbour's right neighbour
 		getRight().setLeft(this); // reset right neighbour's left neighbour
 
-		initializeDefaults(inDigit, inType, inIndex); // Set other ColumnNode properties
-	}
-
-
-	private void initializeDefaults(int inDigit, Constraint inType, int inIndex) {
-		S = 0; // size of the column is 0 until things are added to it
-		digit = inDigit;
-		type = inType;
-		index = inIndex;
+		this.constr = constr;
 	}
 
 
@@ -78,6 +68,9 @@ class ColumnNode implements LLNode<ColumnNode> {
 	}
 	public ColumnNode getCol() {
 		return this;
+	}
+	public Constraint getConstraint() {
+		return constr;
 	}
 
 
@@ -108,7 +101,7 @@ class ColumnNode implements LLNode<ColumnNode> {
 
 
 	public String toString() {
-		return "" + digit + type + index;
+		return constr.toString();
 	}
 
 
@@ -123,24 +116,6 @@ class ColumnNode implements LLNode<ColumnNode> {
 		setUp(newNode); // reset this's up neighbour
 		incrementSize();
 	}
-
-
-/*
-	// doc comment
-	// true if successful
-	// false otherwise
-	boolean removeTopRow() {
-		LLNode centre = getDown();
-		if (centre == this) return false;
-		LLNode cur = centre.getRight();
-		while (cur != centre) {
-			;
-		}
-	}
-*/
-
-
-
 
 
 	// doc comment
