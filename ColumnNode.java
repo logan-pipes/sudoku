@@ -1,10 +1,10 @@
-/**
+/*
  * ColumnNode.java
  *
  * @author Logan Pipes
- * @date 05-12-2022
+ * @date 11-12-2022
  *
- * A class representing a column object, used in implementing Knuth's DLX algorithm.
+ * A class representing a column object, used in implementing Donald Knuth's DLX algorithm.
  * Represents a constraint in an exact cover problem.
  */
 
@@ -22,6 +22,13 @@ class ColumnNode implements LLNode<ColumnNode> {
 
 
 	// Constructors
+
+	/**
+	 * Constructs a standalone ColumnNode from a given Constraint.
+	 * Sets all neighbour references to itself.
+	 *
+	 * @param	constr	the Constraint this ColumnNode should represent
+	 */
 	public ColumnNode(Constraint constr) {
 		// Set links:
 		// Create vertical loop:
@@ -36,6 +43,13 @@ class ColumnNode implements LLNode<ColumnNode> {
 	}
 
 
+	/**
+	 * Constructs a ColumnNode from a given Constraint, to the right of the given ColumnNode.
+	 * Sets all neighbour references according to its position in the row as the specified by the left neighbour.
+	 *
+	 * @param	constr	the Constraint this ColumnNode should represent
+	 * @param	left	the ColumnNode it should be constructed adjacent to
+	 */
 	public ColumnNode(Constraint constr, ColumnNode left) {
 		// Set links:
 		// Create vertical loop:
@@ -69,10 +83,6 @@ class ColumnNode implements LLNode<ColumnNode> {
 	public ColumnNode getCol() {
 		return this;
 	}
-	public Constraint getConstraint() {
-		return constr;
-	}
-
 
 	public void setLeft(ColumnNode left) {
 		L = left;
@@ -88,18 +98,51 @@ class ColumnNode implements LLNode<ColumnNode> {
 	}
 
 
+	/**
+	 * Returns the Constraint this ColumnNode represents.
+	 *
+	 * @return	the Constraint this ColumnNode represents
+	 */
+	public Constraint getConstraint() {
+		return constr;
+	}
+
+
+	/**
+	 * Returns the number of DataNodes in this column, or equivalently, the number of ways to satisfy this constraint.
+	 *
+	 * @return	the number of DataNodes in this column
+	 */
 	int getSize() {
 		return S;
 	}
+
+
+	/**
+	 * Increases the value representing the number of DataNodes in this column by 1.
+	 */
 	void incrementSize() {
 		S++;
 	}
-	void decrementSize() {
+
+
+	/**
+	 * Decreases the value representing the number of DataNodes in this column by 1.
+	 *
+	 * @throws	IllegalStateException	if size is not positive
+	 */
+	void decrementSize() throws IllegalStateException {
 		if (S > 0) S--;
-		// TODO - maybe put an exception here?
+		else throw new IllegalStateException("Cannot decrement size below 0.");
 	}
 
 
+	/**
+	 * Returns a human readable String representation of the constraint this ColumnNode corresponds to.
+	 *
+	 * @return	a human readable String representation of the constraint this ColumnNode corresponds to
+	 */
+	@Override
 	public String toString() {
 		return constr.toString();
 	}
@@ -108,7 +151,11 @@ class ColumnNode implements LLNode<ColumnNode> {
 
 	// Other methods
 
-	// doc comment
+	/**
+	 * Adds a DataNode to the bottom of this column and updates all relevant references.
+	 *
+	 * @param	newNode	the DataNode to add to the column
+	 */
 	void addToBottom(DataNode newNode) {
 		newNode.setUp(getUp()); // set newNode's up neighbour
 		newNode.setDown(this); // set newNode's down neighbour
@@ -118,7 +165,13 @@ class ColumnNode implements LLNode<ColumnNode> {
 	}
 
 
-	// doc comment
+	/**
+	 * Marks this column as covered, or that the constraint this represents is satisfied.
+	 * <p>
+	 * Removes this column from the list (row) of ColumnNodes still not satisfied,
+	 * and removes each row that satisfies this column's constraint (the row containing each DataNode in this column)
+	 * from consideration for satisfying any other constraints (makes their respective columns skip over them).
+	 */
 	void cover() {
 		// Skip this column in the ColumnNode list
 		ColumnNode r = getRight();
@@ -131,27 +184,6 @@ class ColumnNode implements LLNode<ColumnNode> {
 		while (columnCore != this) { // For every node in the column (except the header)
 			LLNode inRow = columnCore.getRight();
 			while (inRow != columnCore) { // For every node in the same row as columnCore (except columnCore itself)
-
-				// The question is, should this all live in a method? Maybe something like removeRow() in DataNode?
-				// It definitely shouldn't be in LLNode, because removing the row from within columnNode is a bad idea,
-				// but that means that columnCore can't be an LLNode, it has to be a DataNode.
-				// But because we're iterating downward, eventually it will hit a ColumnNode, so the type has to be general
-				// Maybe something like casting could work, (DataNode)inRow.removeRow();
-				// As the programmer, I'm confident (certain) that inRow will always be a dataNode or the while condition would fail and exit,
-				// but can I make the code believe that
-				//
-				// WAIT! What about in ColumnNode, a method boolean removeTopRow();
-				// This returns false if getDown() returns a ColumnNode (which would be itself),
-				// and otherwise it knows it's a row it can delete, so it does all this inRow stuff
-				// then cover can do the "Skip this column" stuff at the top, and then just say while(removeTopRow());
-				//
-				// I think this is a good paradigm
-				//
-				// sike, this might be a bad idea...
-				// since the loop doesn't actually get rid of each columnCore,
-				// doing it via the removeTopRow idea means that you lose a reference
-				// I think the perscribed way might actually be better :/, even if not OOP
-
 				inRow.getDown().setUp(inRow.getUp()); // skip inRow going up
 				inRow.getUp().setDown(inRow.getDown()); // skip inRow going down
 				inRow.getCol().decrementSize(); // inRow is removed from the column, stop couting it toward size
@@ -163,7 +195,13 @@ class ColumnNode implements LLNode<ColumnNode> {
 	}
 
 
-	// doc comment
+	/**
+	 * Marks this column as uncovered, or that the constraint this represents is no longer satisfied.
+	 * <p>
+	 * Adds this column back into the list (row) of ColumnNodes still not satisfied, between the correct neighbours.
+	 * Adds each row that satisfies this column's constraint (the row containing each DataNode in this column)
+	 * back into consideration for satisfying the other constraints (uses the saved references to add each node back into it's respective column).
+	 */
 	void uncover() {
 		// Add back each row in the column
 		LLNode columnCore = getUp();

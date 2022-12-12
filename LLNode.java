@@ -1,4 +1,4 @@
-/**
+/*
  * LLNode.java
  *
  * @author Logan Pipes

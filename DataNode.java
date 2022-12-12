@@ -1,10 +1,10 @@
-/**
+/*
  * DataNode.java
  *
  * @author Logan Pipes
- * @date 02-12-2022
+ * @date 11-12-2022
  *
- * A class representing a data object, an important piece of Knuth's DLX algorithm's implementation.
+ * A class representing a data object, an important piece of Donald Knuth's DLX algorithm's implementation.
  * Represents the satisfaction of a constraint in an exact cover problem.
  */
 
@@ -19,6 +19,14 @@ class DataNode implements LLNode<DataNode> {
 
 
 	// Constructors
+
+	/**
+	 * Constructs a DataNode under a given ColumnNode.
+	 * <p>
+	 * Adds this to the bottom of the given column and updates all references and values accordingly.
+	 *
+	 * @param	col	the ColumnNode under which to be inserted
+	 */
 	DataNode(ColumnNode col) {
 		// Set vertical links:
 		setCol(col); // set column
@@ -30,6 +38,15 @@ class DataNode implements LLNode<DataNode> {
 	}
 
 
+	/**
+	 * Constructs a DataNode under a given ColumnNode, and adjacent to a given DataNode.
+	 * <p>
+	 * Adds this to the bottom of the given column and updates all vertical references and values accordingly.
+	 * Also adds this to the horizontal loop containing the given DataNode.
+	 *
+	 * @param	col		the ColumnNode under which to be inserted
+	 * @param	left	the DataNode beside which to be inserted
+	 */
 	DataNode(ColumnNode col, DataNode left) {
 		// Set vertical links:
 		setCol(col); // set column
