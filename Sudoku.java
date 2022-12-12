@@ -32,7 +32,11 @@ public class Sudoku {
 	 * @throws	InstantiationException	if the values do not correspond to a valid sudoku
 	 */
 	public Sudoku(int[][] inBoard) throws InstantiationException {
-		initializeBoard(inBoard);
+		try {
+			initializeBoard(inBoard);
+		} catch (IllegalArgumentException e) {
+			throw new InstantiationException(e.getMessage());
+		}
 	}
 
 
