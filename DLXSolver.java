@@ -12,7 +12,7 @@ public class DLXSolver extends SudokuSolver {
 	 * Return a solved instance of the specified Sudoku puzzle computed via Donald Knuth's DLX algorithm.
 	 *
 	 * @return							a solved Sudoku object (that is, one whose <code>isSolved</code> method returns <code>true</code>)
-	 * 									or null if no such solution exists
+	 * 									or <code>s</code> if no such solution exists
 	 * @throws	InstantiationException	if an error occurs when instantiating the solution Sudoku
 	 */
 	@Override
@@ -26,8 +26,8 @@ public class DLXSolver extends SudokuSolver {
 		LLNode[] solution = new LLNode[numEmptyCells]; // Create an array to hold the solution
 		ColumnNode head = createMatrix(board); // Create the exact cover formulation of the board
 		boolean solved = search(0, head, solution); // Solve the puzzle recursively (if possible)
-		// If no solution existed, return null
-		if (!solved) return null;
+		// If no solution existed, return s
+		if (!solved) return s;
 
 		// Otherwise, a solution existed, so the rest of the correct assignment is stored in solution
 		for (int index = 0; index < numEmptyCells; index++) { // So parse the correct assignment from what's stored in solution

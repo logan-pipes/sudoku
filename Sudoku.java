@@ -2,7 +2,7 @@
  * Sudoku.java
  *
  * @author Logan Pipes
- * @date 11-12-2022
+ * @date 12-12-2022
  *
  * Holds the relevant data for an immutable generalized m^2 by m^2 sudoku puzzle.
  */
@@ -275,5 +275,24 @@ public class Sudoku {
 			}
 		}
 		return true; // No conditions violated, so board is therefore valid
+	}
+
+
+	/**
+	 * Determines whether the content of two Sudokus is the same.
+	 *
+	 * @param	other	the other Sudoku
+	 * @return			<code>true</code> if the two Sudokus share the same data;
+	 * 					<code>false</code> otherwise
+	 */
+	@Override
+	public boolean equals(Sudoku other) {
+		if (boardSize != other.getSize() || subBoardSize != other.getSubBoardSize()) return false; // Wrong dimensions
+		for (int row = 0; row < boardSize; row++) {
+			for (int col = 0; col < boardSize; col++) {
+				if (board[row][col] != other.getEntry(row,col)) return false; // Entry mismatch
+			}
+		}
+		return true; // No issues, so they must be the same
 	}
 }

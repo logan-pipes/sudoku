@@ -9,6 +9,10 @@
 import java.io.*;
 
 public class TestSudoku {
+	/*
+	 * Note that this is called with a file name as a command line argument,
+	 * and will not read the contents of System.in to construct a Sudoku.
+	 */
 	public static void main(String[] args) throws InstantiationException {
 		System.out.println("Constructing new File at path" + args[0]);
 		File f = new File(args[0]);
@@ -31,7 +35,7 @@ public class TestSudoku {
 		Sudoku dlxSolved = dlxs.solve(raw);
 		long endDLX = System.currentTimeMillis();
 		System.out.println();
-		if (dlxSolved != null && dlxSolved.isSolved()) {
+		if (dlxSolved.isSolved()) {
 			System.out.println("DLXSolver solved Sudoku successfully in " + (endDLX - startDLX) + " milliseconds:");
 			System.out.println();
 			System.out.println(dlxSolved);
@@ -48,7 +52,7 @@ public class TestSudoku {
 		Sudoku btSolved = bts.solve(raw);
 		long endBacktracking = System.currentTimeMillis();
 		System.out.println();
-		if (btSolved != null && btSolved.isSolved()) {
+		if (btSolved.isSolved()) {
 			System.out.println("BacktrackingSolver solved Sudoku successfully in " + (endBacktracking - startBacktracking) + " milliseconds:");
 			System.out.println();
 			System.out.println(btSolved);

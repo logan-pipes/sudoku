@@ -12,7 +12,7 @@ public class BacktrackingSolver extends SudokuSolver {
 	 * Return a solved instance of the specified Sudoku puzzle computed via a recursive backtracking algorithm.
 	 *
 	 * @return							a solved Sudoku object (that is, one whose <code>isSolved</code> method returns <code>true</code>)
-	 * 									or null if no such solution exists
+	 * 									or <code>s</code> if no such solution exists
 	 * @throws	InstantiationException	if an error occurs when instantiating the solution Sudoku
 	 */
 	@Override
@@ -20,7 +20,7 @@ public class BacktrackingSolver extends SudokuSolver {
 		int[][] board = s.getBoard();
 		boolean isSolvable = recurse(board, 0, 0);
 		if (isSolvable) return new Sudoku(board); // board holds the solution, so create a new Sudoku with the solution to return
-		return null; // Otherwise it's unsolvable
+		return s; // Otherwise it's unsolvable
 	}
 
 
