@@ -21,8 +21,8 @@ public class TestSudoku {
 		System.out.println(raw);
 		System.out.println();
 
-		System.out.println("Constructing new SudokuSolver of subclass BackTrackingSolver");
-		SudokuSolver ss = new BacktrackingSolver();
+		System.out.println("Constructing new SudokuSolver of subclass DLXSolver");
+		SudokuSolver ss = new DLXSolver();
 
 		System.out.println("Solving passed Sudoku");
 		Sudoku solved = ss.solve(raw);
