@@ -279,14 +279,18 @@ public class Sudoku {
 
 
 	/**
-	 * Determines whether the content of two Sudokus is the same.
+	 * Determines whether another object is a Sudoku equal in content to this.
 	 *
-	 * @param	other	the other Sudoku
-	 * @return			<code>true</code> if the two Sudokus share the same data;
+	 * @param	other	the other object
+	 * @return			<code>true</code> if the other object is a Sudoku sharing the same data;
 	 * 					<code>false</code> otherwise
 	 */
 	@Override
-	public boolean equals(Sudoku other) {
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Sudoku)) return false; // Not even a Sudoku
+		Sudoku other = (Sudoku)obj;
+		if (other == this) return true; // The exact(!) same Sudoku
+
 		if (boardSize != other.getSize() || subBoardSize != other.getSubBoardSize()) return false; // Wrong dimensions
 		for (int row = 0; row < boardSize; row++) {
 			for (int col = 0; col < boardSize; col++) {
