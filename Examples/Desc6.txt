@@ -1,0 +1,1 @@
+Unsolvable puzzle from http://norvig.com/sudoku.html
